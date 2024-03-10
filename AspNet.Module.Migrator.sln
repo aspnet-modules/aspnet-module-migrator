@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F2A2AA2C-68F3-4ECD-9ED7-42358FEE0914}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "files", "files", "{55826AE7-CDEB-4C41-BCF1-B09BA5E3709C}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		README.md = README.md
+		nuget.json = nuget.json
+		dotnet.yml = .github/workflows/dotnet.yml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNet.Module.Migrator", "src\AspNet.Module.Migrator\AspNet.Module.Migrator.csproj", "{DF98EE96-9512-4AB7-9E95-9A1F9289A34B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DF98EE96-9512-4AB7-9E95-9A1F9289A34B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF98EE96-9512-4AB7-9E95-9A1F9289A34B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF98EE96-9512-4AB7-9E95-9A1F9289A34B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF98EE96-9512-4AB7-9E95-9A1F9289A34B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DF98EE96-9512-4AB7-9E95-9A1F9289A34B} = {F2A2AA2C-68F3-4ECD-9ED7-42358FEE0914}
+	EndGlobalSection
+EndGlobal

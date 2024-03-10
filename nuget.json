@@ -1,0 +1,6 @@
+{
+  "src": "./src",
+  "packages": {
+    "AspNet.Module.Migrator": true
+  }
+}
