@@ -102,7 +102,7 @@ public abstract class BaseMigratorHost<TDbContext>
         {
             var seedDatabaseProvider = sp.GetRequiredService<SeedDatabaseProvider<TDbContext>>();
             await using var seedDbContext = databaseFactory.Create(connStr, configure, migrationsHistorySchema);
-            await seedDatabaseProvider.Execute(seedDbContext, ct);
+            await seedDatabaseProvider.Execute(seedDbContext, migrationsHistorySchema, ct);
         }
 
         logger.LogWarning("------> Мигратор выполнил все задачи! <------");

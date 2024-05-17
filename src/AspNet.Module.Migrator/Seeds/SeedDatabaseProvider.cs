@@ -28,10 +28,11 @@ internal class SeedDatabaseProvider<TDbContext>
         _seedDatabaseHelper = seedDatabaseHelper;
     }
 
-    public async Task Execute(TDbContext dbContext, CancellationToken ct)
+    public async Task Execute(TDbContext dbContext, string? seedHistorySchema, CancellationToken ct)
     {
+        seedHistorySchema ??= "public";
         var productVersion = typeof(DatabaseFacade).Assembly.GetName().Version?.ToString() ?? string.Empty;
-        await CreateSeedsTablesIfNeeded(dbContext, ct);
+        await CreateSeedsTablesIfNeeded(dbContext, seedHistorySchema, ct);
         _logger.LogInformation("Началась популяция данных ----------->");
         if (_seedDatabaseExecutors.Length == 0)
         {
@@ -43,7 +44,7 @@ internal class SeedDatabaseProvider<TDbContext>
             var seedExecutorName = seedExecutor.Name;
             _logger.LogDebug($"Популятор {seedExecutorName}: Запускаю популяцию данных ----->");
 
-            if (await SeedNameExists(dbContext, seedExecutorName, ct))
+            if (await SeedNameExists(dbContext, seedHistorySchema, seedExecutorName, ct))
             {
                 _logger.LogDebug($"Популятор {seedExecutorName}: Уже выполнен...");
                 continue;
@@ -55,7 +56,7 @@ internal class SeedDatabaseProvider<TDbContext>
                 await dbContext.SaveChangesAsync(ct);
 
                 await _seedDatabaseHelper.RawSqlQuery(dbContext,
-                    $"insert into \"{SeedsTable}\" (\"seed_id\",\"product_version\") VALUES('{seedExecutor.Name}','{productVersion}') ON CONFLICT (\"seed_id\") DO NOTHING;",
+                    $"insert into \"{seedHistorySchema}\".\"{SeedsTable}\" (\"seed_id\",\"product_version\") VALUES('{seedExecutor.Name}','{productVersion}') ON CONFLICT (\"seed_id\") DO NOTHING;",
                     ct);
 
                 _logger.LogDebug($"Популятор {seedExecutorName}: Популяция данных завершена <-----");
@@ -70,16 +71,18 @@ internal class SeedDatabaseProvider<TDbContext>
         _logger.LogInformation("Завершилась Популяция данных <-----------");
     }
 
-    private async Task CreateSeedsTablesIfNeeded(DbContext dbContext, CancellationToken ct)
+    private async Task CreateSeedsTablesIfNeeded(DbContext dbContext, string seedHistorySchema, CancellationToken ct)
     {
         var sql = _seedDatabaseHelper.ReadEmbeddedText("CreateSeedsTables.sql", GetType().Assembly);
+        sql = sql.Replace("{SeedSchema}", seedHistorySchema);
         await _seedDatabaseHelper.RawSqlQuery(dbContext, sql, ct);
     }
 
-    private async Task<bool> SeedNameExists(DbContext dbContext, string seedExecutorName, CancellationToken ct)
+    private async Task<bool> SeedNameExists(DbContext dbContext, string seedHistorySchema, string seedExecutorName,
+        CancellationToken ct)
     {
         var command = await _seedDatabaseHelper.CreateSqlCommand(dbContext,
-            $"select count(1) from \"{SeedsTable}\" where \"seed_id\"='{seedExecutorName}';",
+            $"select count(1) from \"{seedHistorySchema}\".\"{SeedsTable}\" where \"seed_id\"='{seedExecutorName}';",
             ct);
         await using var result = await command.ExecuteReaderAsync(ct);
         var exists = false;

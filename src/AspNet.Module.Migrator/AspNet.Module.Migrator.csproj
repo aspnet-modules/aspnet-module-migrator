@@ -13,7 +13,7 @@
         <IsPackable>true</IsPackable>
         <IncludeSymbols>true</IncludeSymbols>
         <PackageId>AspNet.Module.Migrator</PackageId>
-        <Version>1.0.1</Version>
+        <Version>1.0.2</Version>
         <Authors>kvandake</Authors>
         <Company>kvandake</Company>
     </PropertyGroup>
