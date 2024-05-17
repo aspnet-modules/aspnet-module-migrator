@@ -12,5 +12,5 @@ public interface ICreateDatabaseFactory<out TDbContext>
     /// <summary>
     ///     Создать новый экземпляр контекста БД
     /// </summary>
-    TDbContext Create(string? connStr, Action<NpgsqlDbContextOptionsBuilder>? configure = null);
+    TDbContext Create(string? connStr, Action<NpgsqlDbContextOptionsBuilder>? configure, string? migrationsHistorySchema);
 }

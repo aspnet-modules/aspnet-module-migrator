@@ -82,7 +82,8 @@ public abstract class BaseMigratorHost<TDbContext>
     ///     Миграция и сиды
     /// </summary>
     protected async Task MigrateAndSeed(IServiceScope scope, string? connStr,
-        Action<NpgsqlDbContextOptionsBuilder>? configure, bool seed, CancellationToken ct)
+        Action<NpgsqlDbContextOptionsBuilder>? configure, string? migrationsHistorySchema,
+        bool seed, CancellationToken ct)
     {
         var sp = scope.ServiceProvider;
         var logger = sp.GetRequiredService<ILogger<TDbContext>>();
@@ -94,13 +95,13 @@ public abstract class BaseMigratorHost<TDbContext>
         var env = sp.GetRequiredService<IHostEnvironment>();
         logger.LogDebug($"<------> Мигратор - {env.ApplicationName} [{env.EnvironmentName}] <------>");
 
-        await using var migrateDbContext = databaseFactory.Create(connStr, configure);
+        await using var migrateDbContext = databaseFactory.Create(connStr, configure, migrationsHistorySchema);
         await migrateDatabaseProvider.Execute(migrateDbContext, ct);
 
         if (seed)
         {
             var seedDatabaseProvider = sp.GetRequiredService<SeedDatabaseProvider<TDbContext>>();
-            await using var seedDbContext = databaseFactory.Create(connStr, configure);
+            await using var seedDbContext = databaseFactory.Create(connStr, configure, migrationsHistorySchema);
             await seedDatabaseProvider.Execute(seedDbContext, ct);
         }
 

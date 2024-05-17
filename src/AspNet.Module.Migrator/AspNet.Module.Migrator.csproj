@@ -13,12 +13,13 @@
         <IsPackable>true</IsPackable>
         <IncludeSymbols>true</IncludeSymbols>
         <PackageId>AspNet.Module.Migrator</PackageId>
-        <Version>1.0.0</Version>
+        <Version>1.0.1</Version>
         <Authors>kvandake</Authors>
         <Company>kvandake</Company>
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="aspnet.module.dal.efcore" Version="1.0.4" />
         <PackageReference Include="AspNet.Module.Logging" Version="1.0.0"/>
         <PackageReference Include="EFCore.NamingConventions" Version="8.0.3" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.2" />

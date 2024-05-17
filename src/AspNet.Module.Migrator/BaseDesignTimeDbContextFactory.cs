@@ -1,8 +1,11 @@
 ﻿using System.Reflection;
-using AspNet.Module.Migrator.Database;
+using AspNet.Module.Dal.EfCore.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using Npgsql;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
+using DbConnectionStr = AspNet.Module.Migrator.Database.DbConnectionStr;
 
 namespace AspNet.Module.Migrator;
 
@@ -17,9 +20,19 @@ public abstract class BaseDesignTimeDbContextFactory<TDbContext> : IDesignTimeDb
     {
         var builder = new DbContextOptionsBuilder<TDbContext>();
         var connection = GetConnectionString();
-        NpgsqlDbContextConfigurer.Configure(builder, connection);
+        var dataSourceBuilder = new NpgsqlDataSourceBuilder(connection);
+        var dataSource = dataSourceBuilder.Build();
+        var migrationsHistorySchema = GetMigrationsHistorySchema();
+        NpgsqlDbContextConfigurer.Configure(builder, dataSource, ConfigureNpgsql, migrationsHistorySchema);
 
         return CreateDbContext(builder.Options);
+    }
+
+    /// <summary>
+    ///     Настройка Npgsql
+    /// </summary>
+    protected virtual void ConfigureNpgsql(NpgsqlDbContextOptionsBuilder builder)
+    {
     }
 
     /// <summary>
@@ -45,4 +58,10 @@ public abstract class BaseDesignTimeDbContextFactory<TDbContext> : IDesignTimeDb
         ArgumentNullException.ThrowIfNull(connStr, nameof(connStr));
         return connStr;
     }
+
+    /// <summary>
+    ///     Получить схему миграции
+    /// </summary>
+    /// <returns></returns>
+    protected virtual string GetMigrationsHistorySchema() => "public";
 }

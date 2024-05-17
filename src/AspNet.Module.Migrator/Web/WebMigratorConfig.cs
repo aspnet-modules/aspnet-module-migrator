@@ -51,4 +51,9 @@ public class WebMigratorConfig<TDbContext>
     ///     Запустить сиды
     /// </summary>
     public bool Seed { get; init; }
+    
+    /// <summary>
+    ///     Схема для истории миграций
+    /// </summary>
+    public string? MigrationsHistorySchema { get; init; }
 }

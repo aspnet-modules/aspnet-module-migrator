@@ -39,4 +39,9 @@ public class ConsoleMigratorConfig<TDbContext>
     ///     Конфигурация <see cref="NpgsqlDbContextOptionsBuilder" />
     /// </summary>
     public Action<NpgsqlDbContextOptionsBuilder>? NpgsqlConfigure { get; init; }
+    
+    /// <summary>
+    ///     Схема для истории миграций
+    /// </summary>
+    public string? MigrationsHistorySchema { get; init; }
 }

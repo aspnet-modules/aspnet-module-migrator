@@ -26,6 +26,7 @@ internal class WebMigratorHost<TDbContext> : BaseMigratorHost<TDbContext>, IAspN
         var sp = sc.BuildServiceProvider();
         using var scope = sp.CreateScope();
 
-        await MigrateAndSeed(scope, _config.ConnStr, _config.NpgsqlConfigure, _config.Seed, ct);
+        await MigrateAndSeed(scope, _config.ConnStr, _config.NpgsqlConfigure, _config.MigrationsHistorySchema,
+            _config.Seed, ct);
     }
 }

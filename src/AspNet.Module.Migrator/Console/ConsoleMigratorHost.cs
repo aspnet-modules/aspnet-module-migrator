@@ -54,7 +54,8 @@ internal class ConsoleMigratorHost<TDbContext> : BaseMigratorHost<TDbContext>, I
         await using var hostScope = host.Services.CreateAsyncScope();
         var cts = new CancellationTokenSource(TimeSpan.FromHours(1));
         using var scope = hostScope.ServiceProvider.CreateScope();
-        await MigrateAndSeed(scope, args.ConnectionString, config.NpgsqlConfigure, args.Seed, cts.Token);
+        await MigrateAndSeed(scope, args.ConnectionString, config.NpgsqlConfigure,
+            config.MigrationsHistorySchema, args.Seed, cts.Token);
     }
 
     private static Task ParseError(IEnumerable<Error> errs)
