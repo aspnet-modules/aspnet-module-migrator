@@ -1,16 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
+﻿using AspNet.Module.Migrator.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace AspNet.Module.Migrator.Database;
 
 /// <summary>
 ///     Создание контекста БД
 /// </summary>
-public interface ICreateDatabaseFactory<out TDbContext>
+public interface ICreateDatabaseFactory<TDbContext>
     where TDbContext : DbContext
 {
     /// <summary>
     ///     Создать новый экземпляр контекста БД
     /// </summary>
-    TDbContext Create(string? connStr, Action<NpgsqlDbContextOptionsBuilder>? configure, string? migrationsHistorySchema);
+    TDbContext Create(string? connStr, IMigratorInternalConfig<TDbContext> internalConfig);
 }

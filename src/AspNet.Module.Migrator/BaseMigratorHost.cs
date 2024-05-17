@@ -9,7 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 using Serilog;
 
 // ReSharper disable TemplateIsNotCompileTimeConstantProblem
@@ -82,7 +81,7 @@ public abstract class BaseMigratorHost<TDbContext>
     ///     Миграция и сиды
     /// </summary>
     protected async Task MigrateAndSeed(IServiceScope scope, string? connStr,
-        Action<NpgsqlDbContextOptionsBuilder>? configure, string? migrationsHistorySchema,
+        IMigratorInternalConfig<TDbContext> internalConfig,
         bool seed, CancellationToken ct)
     {
         var sp = scope.ServiceProvider;
@@ -95,14 +94,14 @@ public abstract class BaseMigratorHost<TDbContext>
         var env = sp.GetRequiredService<IHostEnvironment>();
         logger.LogDebug($"<------> Мигратор - {env.ApplicationName} [{env.EnvironmentName}] <------>");
 
-        await using var migrateDbContext = databaseFactory.Create(connStr, configure, migrationsHistorySchema);
+        await using var migrateDbContext = databaseFactory.Create(connStr, internalConfig);
         await migrateDatabaseProvider.Execute(migrateDbContext, ct);
 
         if (seed)
         {
             var seedDatabaseProvider = sp.GetRequiredService<SeedDatabaseProvider<TDbContext>>();
-            await using var seedDbContext = databaseFactory.Create(connStr, configure, migrationsHistorySchema);
-            await seedDatabaseProvider.Execute(seedDbContext, migrationsHistorySchema, ct);
+            await using var seedDbContext = databaseFactory.Create(connStr, internalConfig);
+            await seedDatabaseProvider.Execute(seedDbContext, internalConfig, ct);
         }
 
         logger.LogWarning("------> Мигратор выполнил все задачи! <------");

@@ -1,9 +1,9 @@
 ﻿using System.Reflection;
 using AspNet.Module.Dal.EfCore.Database;
+using AspNet.Module.Migrator.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 
 namespace AspNet.Module.Migrator.Database;
 
@@ -22,11 +22,11 @@ internal class DefaultCreateDatabaseFactory<TDbContext> : ICreateDatabaseFactory
     }
 
     /// <inheritdoc />
-    public TDbContext Create(string? connStr, Action<NpgsqlDbContextOptionsBuilder>? configure, 
-        string? migrationsHistorySchema)
+    public TDbContext Create(string? connStr, IMigratorInternalConfig<TDbContext> internalConfig)
     {
         connStr = DbConnectionStr.Normalize(connStr) ?? DbConnectionStr.FromConfiguration(_configuration);
-        DbContextOptionsBuilder optionsBuilder = new DbContextOptionsBuilder<TDbContext>();
+        var optionsBuilder = new DbContextOptionsBuilder<TDbContext>();
+        internalConfig.DbContext?.Invoke(optionsBuilder);
 
         var dataSourceBuilder = new NpgsqlDataSourceBuilder(connStr);
         var dataSource = dataSourceBuilder.Build();
@@ -35,8 +35,8 @@ internal class DefaultCreateDatabaseFactory<TDbContext> : ICreateDatabaseFactory
         {
             var migrationAssembly = typeof(TDbContext).Assembly.FullName;
             builder.MigrationsAssembly(migrationAssembly);
-            configure?.Invoke(builder);
-        }, migrationsHistorySchema);
+            internalConfig.NpgsqlContext?.Invoke(builder);
+        }, internalConfig.MigratorSchema);
 
         const BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
         return (TDbContext)Activator.CreateInstance(typeof(TDbContext), flags, null,

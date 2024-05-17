@@ -1,7 +1,10 @@
+using AspNet.Module.Migrator.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
+
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
@@ -10,7 +13,7 @@ namespace AspNet.Module.Migrator.Web;
 /// <summary>
 ///     Конфигурация Web
 /// </summary>
-public class WebMigratorConfig<TDbContext>
+public class WebMigratorConfig<TDbContext> : IMigratorInternalConfig<TDbContext>
     where TDbContext : DbContext
 {
     /// <summary>
@@ -43,17 +46,22 @@ public class WebMigratorConfig<TDbContext>
     public IHostEnvironment Env { get; }
 
     /// <summary>
-    ///     Конфигурация <see cref="NpgsqlDbContextOptionsBuilder" />
-    /// </summary>
-    public Action<NpgsqlDbContextOptionsBuilder>? NpgsqlConfigure { get; init; }
-
-    /// <summary>
     ///     Запустить сиды
     /// </summary>
     public bool Seed { get; init; }
-    
+
     /// <summary>
-    ///     Схема для истории миграций
+    ///     Конфигурация <see cref="DbContextOptionsBuilder" />
     /// </summary>
-    public string? MigrationsHistorySchema { get; init; }
+    public Action<DbContextOptionsBuilder<TDbContext>>? DbContext { get; init; }
+
+    /// <summary>
+    ///     Схема для истории миграций и сидов
+    /// </summary>
+    public string MigratorSchema { get; init; } = AspNetMigratorConstants.DefaultMigrationsHistorySchema;
+
+    /// <summary>
+    ///     Конфигурация <see cref="NpgsqlDbContextOptionsBuilder" />
+    /// </summary>
+    public Action<NpgsqlDbContextOptionsBuilder>? NpgsqlContext { get; init; }
 }

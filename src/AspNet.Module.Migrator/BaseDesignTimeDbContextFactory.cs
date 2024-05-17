@@ -24,8 +24,16 @@ public abstract class BaseDesignTimeDbContextFactory<TDbContext> : IDesignTimeDb
         var dataSource = dataSourceBuilder.Build();
         var migrationsHistorySchema = GetMigrationsHistorySchema();
         NpgsqlDbContextConfigurer.Configure(builder, dataSource, ConfigureNpgsql, migrationsHistorySchema);
+        ConfigureBuilder(builder);
 
         return CreateDbContext(builder.Options);
+    }
+
+    /// <summary>
+    ///     Настройка DbContextOptionsBuilder
+    /// </summary>
+    protected virtual void ConfigureBuilder(DbContextOptionsBuilder<TDbContext> builder)
+    {
     }
 
     /// <summary>

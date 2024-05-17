@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AspNet.Module.Migrator.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Logging;
 
@@ -28,9 +29,9 @@ internal class SeedDatabaseProvider<TDbContext>
         _seedDatabaseHelper = seedDatabaseHelper;
     }
 
-    public async Task Execute(TDbContext dbContext, string? seedHistorySchema, CancellationToken ct)
+    public async Task Execute(TDbContext dbContext, IMigratorInternalConfig<TDbContext> internalConfig, CancellationToken ct)
     {
-        seedHistorySchema ??= "public";
+        var seedHistorySchema = internalConfig.MigratorSchema;
         var productVersion = typeof(DatabaseFacade).Assembly.GetName().Version?.ToString() ?? string.Empty;
         await CreateSeedsTablesIfNeeded(dbContext, seedHistorySchema, ct);
         _logger.LogInformation("Началась популяция данных ----------->");
