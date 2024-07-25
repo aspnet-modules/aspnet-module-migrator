@@ -1,6 +1,7 @@
 using System.Reflection;
 using AspNet.Module.Migrator.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
@@ -21,6 +22,11 @@ public class AspNetMigratorContext<TDbContext>
     ///     Регистрация модулей
     /// </summary>
     public Action<ModuleList>? Modules { get; set; }
+    
+    /// <summary>
+    ///     Регистрация сервисов
+    /// </summary>
+    public Action<IServiceCollection>? Services { get; set; }
 
     /// <summary>
     ///     Регистрация сидов

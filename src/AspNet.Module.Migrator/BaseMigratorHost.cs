@@ -75,6 +75,8 @@ public abstract class BaseMigratorHost<TDbContext>
         {
             module.Configure(ctModuleContext);
         }
+
+        ctx.Services?.Invoke(services);
     }
 
     /// <summary>
