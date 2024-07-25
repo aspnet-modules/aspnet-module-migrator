@@ -38,8 +38,9 @@ public abstract class BaseMigratorHost<TDbContext>
     /// <summary>
     ///     Конфигурация сервисов
     /// </summary>
-    protected void ConfigureServices(IServiceCollection services, IConfiguration configuration,
-        IHostEnvironment env, Action<AspNetMigratorContext<TDbContext>>? configureContext)
+    protected void ConfigureServices(IServiceCollection services, IConfiguration configuration, string? connStr,
+        IHostEnvironment env, IMigratorInternalConfig<TDbContext> internalConfig,
+        Action<AspNetMigratorContext<TDbContext>>? configureContext)
     {
         var ctx = new AspNetMigratorContext<TDbContext>();
         configureContext?.Invoke(ctx);
@@ -77,6 +78,12 @@ public abstract class BaseMigratorHost<TDbContext>
         }
 
         ctx.Services?.Invoke(services);
+
+        services.AddScoped<TDbContext>(sp =>
+        {
+            var dbContextFactory = sp.GetRequiredService<ICreateDatabaseFactory<TDbContext>>();
+            return dbContextFactory.Create(connStr, internalConfig);
+        });
     }
 
     /// <summary>

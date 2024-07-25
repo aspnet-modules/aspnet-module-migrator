@@ -28,7 +28,7 @@ internal class ConsoleMigratorHost<TDbContext> : BaseMigratorHost<TDbContext>, I
         await result.WithNotParsedAsync(ParseError);
     }
 
-    private IHostBuilder CreateHostBuilder(ConsoleMigratorConfig<TDbContext> config)
+    private IHostBuilder CreateHostBuilder(ConsoleMigratorConfig<TDbContext> config, ConsoleMigratorArgs args)
     {
         var hostBuilder = Host.CreateDefaultBuilder(config.Args)
             .ConfigureHostConfiguration(cb =>
@@ -41,7 +41,8 @@ internal class ConsoleMigratorHost<TDbContext> : BaseMigratorHost<TDbContext>, I
             .ConfigureServices((hostContext, services) =>
             {
                 services.AddSingleton(config);
-                ConfigureServices(services, hostContext.Configuration, hostContext.HostingEnvironment, _config.Context);
+                ConfigureServices(services, hostContext.Configuration, args.ConnectionString,
+                    hostContext.HostingEnvironment, _config, _config.Context);
             })
             .UseSerilog((hbc, lc) => ConfigureLogger(lc, hbc.Configuration, hbc.HostingEnvironment));
 
@@ -50,7 +51,7 @@ internal class ConsoleMigratorHost<TDbContext> : BaseMigratorHost<TDbContext>, I
 
     private async Task RunWithOptions(ConsoleMigratorConfig<TDbContext> config, ConsoleMigratorArgs args)
     {
-        using var host = CreateHostBuilder(config).Build();
+        using var host = CreateHostBuilder(config, args).Build();
         await using var hostScope = host.Services.CreateAsyncScope();
         var cts = new CancellationTokenSource(TimeSpan.FromHours(1));
         using var scope = hostScope.ServiceProvider.CreateScope();

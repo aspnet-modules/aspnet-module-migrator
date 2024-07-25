@@ -19,7 +19,7 @@ internal class WebMigratorHost<TDbContext> : BaseMigratorHost<TDbContext>, IAspN
     {
         var sc = new ServiceCollection();
         var lc = ConfigureLogger(new LoggerConfiguration(), _config.Configuration, _config.Env);
-        ConfigureServices(sc, _config.Configuration, _config.Env, _config.Context);
+        ConfigureServices(sc, _config.Configuration, _config.ConnStr, _config.Env, _config, _config.Context);
         var logger = lc.CreateLogger();
         sc.AddLogging(logging => { logging.AddSerilog(logger); });
 
