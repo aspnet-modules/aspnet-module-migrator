@@ -30,7 +30,7 @@ internal class ConsoleMigratorHost<TDbContext> : BaseMigratorHost<TDbContext>, I
 
     private IHostBuilder CreateHostBuilder(ConsoleMigratorConfig<TDbContext> config, ConsoleMigratorArgs args)
     {
-        var hostBuilder = Host.CreateDefaultBuilder(config.Args)
+        var hostBuilder = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(config.Args)
             .ConfigureHostConfiguration(cb =>
             {
                 cb.AddCommandLine(config.Args);
