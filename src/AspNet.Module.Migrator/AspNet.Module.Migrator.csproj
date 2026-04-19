@@ -13,14 +13,19 @@
         <IsPackable>true</IsPackable>
         <IncludeSymbols>true</IncludeSymbols>
         <PackageId>AspNet.Module.Migrator</PackageId>
-        <Version>3.0.0</Version>
+        <Version>3.0.1</Version>
         <Authors>kvandake</Authors>
         <Company>kvandake</Company>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageProjectUrl>https://github.com/aspnet-modules/aspnet-module-migrator</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/aspnet-modules/aspnet-module-migrator</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="aspnet.module.dal.efcore" Version="3.0.0" />
-        <PackageReference Include="aspnet.module.logging" Version="3.0.0" />
+        <PackageReference Include="aspnet.module.dal.efcore" Version="3.0.1" />
+        <PackageReference Include="aspnet.module.logging" Version="3.0.1" />
         <PackageReference Include="EFCore.NamingConventions" Version="10.0.0-rc.2" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.0" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.0" />
@@ -39,6 +44,12 @@
     <ItemGroup>
         <None Remove="Scripts\*.sql"/>
         <EmbeddedResource Include="Scripts\*.sql"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="../../README.md" Pack="true" PackagePath="/">
+            <Link>README.md</Link>
+        </None>
     </ItemGroup>
 
 </Project>
